@@ -82,7 +82,9 @@ export default function Home() {
   const [analyticsError, setAnalyticsError] = useState("");
   const [analyticsNotice, setAnalyticsNotice] = useState("");
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const API_URL = (
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+  ).replace(/\/+$/, "");
   useEffect(() => {
     const initializeClientId = () => {
       const storageKey = "lectonote_client_id";
@@ -153,23 +155,20 @@ export default function Home() {
   async function saveQuizAnalytics(finalScore: number) {
     if (!clientId) return;
     try {
-      const res = await fetch(
-        `${API_URL}/api/analytics/quiz-attempts`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            client_id: clientId,
-            lecture_id: currentLectureId || null,
-            topic: file?.name || "Untitled lecture",
-            score: finalScore,
-            total_questions: quiz.length,
-            percentage: quiz.length
-              ? Math.round((finalScore / quiz.length) * 100)
-              : 0,
-          }),
-        },
-      );
+      const res = await fetch(`${API_URL}/api/analytics/quiz-attempts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: clientId,
+          lecture_id: currentLectureId || null,
+          topic: file?.name || "Untitled lecture",
+          score: finalScore,
+          total_questions: quiz.length,
+          percentage: quiz.length
+            ? Math.round((finalScore / quiz.length) * 100)
+            : 0,
+        }),
+      });
       const data = await res.json();
       if (!res.ok)
         throw new Error(data.detail || "Quiz result could not be saved.");
