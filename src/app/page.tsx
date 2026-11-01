@@ -82,6 +82,7 @@ export default function Home() {
   const [analyticsError, setAnalyticsError] = useState("");
   const [analyticsNotice, setAnalyticsNotice] = useState("");
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   useEffect(() => {
     const initializeClientId = () => {
       const storageKey = "lectonote_client_id";
@@ -106,7 +107,7 @@ export default function Home() {
     setAnalyticsError("");
     try {
       const res = await fetch(
-        `http://localhost:8000/api/analytics?client_id=${encodeURIComponent(id)}`,
+        `${API_URL}/api/analytics?client_id=${encodeURIComponent(id)}`,
       );
       const data = await res.json();
       if (!res.ok)
@@ -129,7 +130,7 @@ export default function Home() {
   }) {
     if (!clientId) return;
     try {
-      const res = await fetch("http://localhost:8000/api/analytics/lectures", {
+      const res = await fetch(`${API_URL}/api/analytics/lectures`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ client_id: clientId, ...payload }),
@@ -153,7 +154,7 @@ export default function Home() {
     if (!clientId) return;
     try {
       const res = await fetch(
-        "http://localhost:8000/api/analytics/quiz-attempts",
+        `${API_URL}/api/analytics/quiz-attempts`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -239,7 +240,7 @@ export default function Home() {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("http://localhost:8000/api/transcribe", {
+      const res = await fetch(`${API_URL}/api/transcribe`, {
         method: "POST",
         body: form,
       });
@@ -277,7 +278,7 @@ export default function Home() {
     setNotesError("");
     setNotes("");
     try {
-      const res = await fetch("http://localhost:8000/api/generate-notes", {
+      const res = await fetch(`${API_URL}/api/generate-notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ transcript }),
@@ -305,7 +306,7 @@ export default function Home() {
     setAnswers({});
     setSubmitted(false);
     try {
-      const res = await fetch("http://localhost:8000/api/generate-quiz", {
+      const res = await fetch(`${API_URL}/api/generate-quiz`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content }),
