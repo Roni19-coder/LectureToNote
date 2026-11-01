@@ -15,14 +15,17 @@ app.include_router(analytics_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","https://lecture-to-note.vercel.app/"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://lecture-to-note.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Start with a small model for a CPU-based laptop.
-MODEL_SIZE = os.getenv("WHISPER_MODEL", "base")
+MODEL_SIZE = os.getenv("WHISPER_MODEL", "tiny")
 model = None
 
 ALLOWED_EXTENSIONS = {
@@ -95,7 +98,7 @@ async def transcribe_lecture(file: UploadFile = File(...)):
 
         segments, info = whisper.transcribe(
             temp_path,
-            beam_size=5,
+            beam_size=1,
             vad_filter=True,
         )
 
